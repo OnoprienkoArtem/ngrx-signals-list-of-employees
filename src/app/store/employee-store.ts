@@ -5,7 +5,7 @@ import { computed } from '@angular/core';
 import { produce } from 'immer';
 
 type EmployeeState = {
-  loadedItems: Employee[];
+  _loadedItems: Employee[];
   isLoading: boolean;
   error: Error | null;
   filters: {
@@ -15,7 +15,7 @@ type EmployeeState = {
 }
 
 const initialState: EmployeeState = {
-  loadedItems: employeesMock,
+  _loadedItems: employeesMock,
   isLoading: false,
   error: null,
   filters: {
@@ -32,10 +32,10 @@ export const EmployeeStore = signalStore(
   withState(initialState),
   withComputed((state) => ({
     count: computed(() => {
-      return state.loadedItems().length;
+      return state._loadedItems().length;
     }),
     items: computed(() => {
-      let result = state.loadedItems();
+      let result = state._loadedItems();
 
       if (state.filters.name()) {
         const search = state.filters.name().toLowerCase();
@@ -77,6 +77,12 @@ export const EmployeeStore = signalStore(
         produce(state, draft => {
           Object.assign(draft.filters.salary, value);
       }))
+    },
+    clearFilters(): void {
+      patchState(store,
+        (state) => ({ filters: { ...state.filters, name: '' }}),
+        (state) => ({ filters: { ...state.filters, salary: { from: 0, to: 100_000 }}}),
+      )
     }
   })),
 );

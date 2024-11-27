@@ -1,0 +1,18 @@
+<h1>List of Employees</h1>
+
+<app-employees-filters />
+
+@if (store.isLoading()) {
+  <p-skeleton styleClass="mb-2" />
+  <p-skeleton width="10rem" styleClass="mb-2" />
+  <p-skeleton width="5rem" styleClass="mb-2" />
+} @if (store.items(); as employee) {
+  <div>
+    count: {{ store.count() }}
+    <ul>
+      @for (e of employee; track e) {
+        <li>{{e.id}} {{e.firstName}}, {{e.lastName}} - {{e.salary}}</li>
+      }
+    </ul>
+  </div>
+}

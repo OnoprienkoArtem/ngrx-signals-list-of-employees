@@ -1,0 +1,29 @@
+<p-inputGroup>
+  <input
+    type="text"
+    pInputText
+    placeholder="name search"
+    [value]="store.filters.name()"
+    (input)="updateName($event)"
+  />
+
+  <input
+    type="number"
+    step="1000"
+    pInputText
+    placeholder="salary from"
+    [value]="store.filters.salary.from()"
+    (input)="updateSalaryFrom($event)"
+  />
+
+  <input
+    type="number"
+    step="1000"
+    pInputText
+    placeholder="salary to"
+    [value]="store.filters.salary.to()"
+    (input)="updateSalaryTo($event)"
+  />
+
+  <button type="button" pButton label="Clear filter" (click)="store.clearFilters()"></button>
+</p-inputGroup>
