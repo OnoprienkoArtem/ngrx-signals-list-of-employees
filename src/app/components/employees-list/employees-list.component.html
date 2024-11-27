@@ -2,6 +2,8 @@
 
 <app-employees-filters />
 
+<button type="button" pButton label="Reload" (click)="store.loadEmployees()"></button>
+
 @if (store.isLoading()) {
   <p-skeleton styleClass="mb-2" />
   <p-skeleton width="10rem" styleClass="mb-2" />
