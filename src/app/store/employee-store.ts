@@ -91,19 +91,28 @@ export const EmployeeStore = signalStore(
       logger.logMessage('clear finished');
     },
   })),
+  withMethods((store) => ({
+    _setLoading() {
+      patchState(store, { isLoading: true, error: null, _loadedItems: []})
+    },
+    _setError(error: Error) {
+      patchState(store, { isLoading: false, error, _loadedItems: []})
+    },
+    _setItems(_loadedItems: Employee[]) {
+      patchState(store, { isLoading: false, error: null, _loadedItems})
+    }
+  })),
   withMethods((store, employeesHttp = inject(EmployeesService)) => ({
     loadEmployees: rxMethod<void>(
       pipe(
-        tap(() => {
-          patchState(store, { isLoading: true, error: null, _loadedItems: []})
-        }),
+        tap(() => store._setLoading()),
         switchMap(() => employeesHttp.getEmployees()),
         tap({
           next(items) {
-            patchState(store, { isLoading: false, error: null, _loadedItems: items})
+            store._setItems(items);
           } ,
           error(e) {
-            patchState(store, { isLoading: false, error: e, _loadedItems: []})
+            store._setError(e);
           },
         }),
       )
