@@ -1,4 +1,4 @@
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { Employee } from '../models/employee.interface';
 import { employeesMock } from '../models/employees.mock';
 import { computed, inject } from '@angular/core';
@@ -117,5 +117,24 @@ export const EmployeeStore = signalStore(
         }),
       )
     ),
+    async loadEmployees_async() {
+      store._setLoading();
+      try {
+        const items = await employeesHttp.preferGlobal();
+        store._setItems(items);
+      } catch (e) {
+        let error = e instanceof Error ? e : new Error('Unknown Error', { cause: e });
+        store._setError(error);
+      }
+    }
   })),
+  withHooks({
+    onInit(store) {
+      store.loadEmployees();
+      // store.loadEmployees_async()
+    },
+    onDestroy(store) {
+
+    }
+  }),
 );
