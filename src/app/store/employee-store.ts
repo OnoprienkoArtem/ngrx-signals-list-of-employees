@@ -7,6 +7,7 @@ import { LoggerService } from '../services/logger/logger.service';
 import { EmployeesService } from '../services/employees/employees.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
+import { withDevtools } from '@angular-architects/ngrx-toolkit';
 
 type EmployeeState = {
   _loadedItems: Employee[];
@@ -34,6 +35,7 @@ const initialState: EmployeeState = {
 export const EmployeeStore = signalStore(
   // { providedIn: 'root' },
   withState(initialState),
+  withDevtools('employees'),
   withComputed((state) => ({
     count: computed(() => {
       return state._loadedItems().length;
@@ -109,6 +111,7 @@ export const EmployeeStore = signalStore(
         switchMap(() => employeesHttp.getEmployees()),
         tap({
           next(items) {
+            console.log(items)
             store._setItems(items);
           } ,
           error(e) {
@@ -120,7 +123,7 @@ export const EmployeeStore = signalStore(
     async loadEmployees_async() {
       store._setLoading();
       try {
-        const items = await employeesHttp.preferGlobal();
+        const items = await employeesHttp.fetchEmployees();
         store._setItems(items);
       } catch (e) {
         let error = e instanceof Error ? e : new Error('Unknown Error', { cause: e });
@@ -130,11 +133,12 @@ export const EmployeeStore = signalStore(
   })),
   withHooks({
     onInit(store) {
+      console.log('onInit store', store)
       store.loadEmployees();
       // store.loadEmployees_async()
     },
-    onDestroy(store) {
-
-    }
+    // onDestroy(store) {
+    //
+    // }
   }),
 );

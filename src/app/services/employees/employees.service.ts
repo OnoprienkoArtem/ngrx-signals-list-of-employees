@@ -18,20 +18,15 @@ export class EmployeesService {
   }
 
   getEmployees(criteria: any = {}): Observable<Employee[]> {
+    console.log('getEmployees');
     return this.#getPage(criteria);
   }
 
-  #getPage(criteria: any, page: number = 1, pageSize = 50): Observable<Employee[]> {
-    return this.#http.get<Employee[]>(`${this.apiUrl}/employees`, {
-      params: this.#createHttpParams(criteria, page, pageSize),
-    }).pipe(
-      map(() => of(employeesMock)),
-    );
+  #getPage(criteria: any = {}, page: number = 1, pageSize = 50): Observable<Employee[]> {
+    return of(employeesMock)
   }
 
-
-
-  async fetchEmployees(criteria: any, page: number = 1, pageSize = 50) {
+  async fetchEmployees(criteria: any = {}, page: number = 1, pageSize = 50) {
     const query = new URLSearchParams({...criteria,
       _limit: pageSize.toString(),
       _page: page.toString()
